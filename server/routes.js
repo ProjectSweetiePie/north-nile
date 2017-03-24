@@ -20,5 +20,5 @@ module.exports.initialize = function(app) {
     app.use('/accounts',  accountsRouter);
     app.use('/upload',    uploadRouter);
     app.use('/',          indexRouter);
-}
+};
 // DO NOT PUT ANY OTHER ROUTES UNDER indexRouter!!!
