@@ -6,6 +6,14 @@ var passport=require('passport');
 var bodyParser=require('body-parser');
 var pg=require('pg');
 
+
+router.get('/facebook', passport.authenticate('facebook', { scope : 'email' }));
+
+router.get('/facebook/callback', passport.authenticate('facebook', {
+  successRedirect: '/user',
+  failureRedirect: '/'
+}));
+
 //route below will only be accessible once a user is logged in; ie tells users they are logged in
 router.get('/', function(request, response, next){
   console.log('requested session information for:', request.user);
@@ -18,11 +26,7 @@ router.get('/', function(request, response, next){
 
 });
 
-router.get('/facebook', passport.authenticate('facebook', { scope : 'email' }));
 
-router.get('/facebook/callback', passport.authenticate('facebook', {
-  successRedirect: ''
-}))
 
 
 module.exports = router;

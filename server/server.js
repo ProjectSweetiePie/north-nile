@@ -79,7 +79,7 @@ app.use(session( {
             password : accessToken,
             email : profile.emails[0].value,
             name : profile.name.givenName + ' ' + profile.name.familyName,
-          }
+          };
           // create new user
           var newFbUser = client.query('INSERT INTO "account" ("username", "password", "email_address", "contact_name") VALUES ($1, $2, $3, $4)', [user.username, user.password, user.email, user.name]);
 
@@ -92,7 +92,7 @@ app.use(session( {
             return callback(null, user);
           });
         }
-      })
+      });
 
     })
   })

@@ -42,7 +42,7 @@ angular.module('northApp').filter("urlFilter", function () {
         }
         return result;
       }
-  }
+  };
 });
   String.prototype.startWith = function (str) {
   return this.indexOf(str) == 0;
