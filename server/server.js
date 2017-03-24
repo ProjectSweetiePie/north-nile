@@ -1,4 +1,5 @@
 // node modules
+require('dotenv').config(); // handles our .env file
 
 var config        = require('../config');
 var express       = require('express');
@@ -7,6 +8,7 @@ var session       = require('express-session');
 var bodyParser    = require('body-parser');
 var pg            = require('pg');
 var localStrategy = require('passport-local').Strategy;
+var facebookStrategy = require('passport-facebook').Strategy;
 
 //local//
 
@@ -37,14 +39,65 @@ app.use(session( {
   cookie: {
     maxAge: 3600000,
     secure: false }
-}));
+  }));
 
-//initializing passport//
+  //initializing passport//
 
-app.use( passport.initialize() );
-app.use( passport.session() );
+  app.use( passport.initialize() );
+  app.use( passport.session() );
 
-//passport happening here///
+  //passport happening here///
+
+
+  passport.use(new facebookStrategy({
+    clientID : process.env.facebookSecret,
+    clientSecret : process.env.fbAppId,
+    callbackURL : process.env.fbCallbackUrl,
+  }, function(accessToken, refreshToken, profile, callback){
+    pg.connect( dbConnection.dbConnectionString, function(err, client) {
+      if ( err ) {
+        console.log('Cannot connect to the database', err);
+        callback( err );
+      }
+      var fbQuery = client.query('SELECT * FROM "account" WHERE "username" = $1', [profile.id]);
+
+      fbQuery.on('error', function(err){
+        console.log(err);
+        callback(err);
+      });
+
+      fbQuery.on('row', function(row){
+        var user = row;
+      });
+
+      fbQuery.on('end', function(){
+        if(user){
+          return callback(null, row);
+        } else {
+          var user = {
+            username : profile.id,
+            password : accessToken,
+            email : profile.emails[0].value,
+            name : profile.name.givenName + ' ' + profile.name.familyName,
+          }
+          // create new user
+          var newFbUser = client.query('INSERT INTO "account" ("username", "password", "email_address", "contact_name") VALUES ($1, $2, $3, $4)', [user.username, user.password, user.email, user.name]);
+
+          newFbUser.on('error', function(err){
+            console.log('Problem creating new FB user' + err);
+            callback(err);
+          });
+
+          newFbUser.on('end', function(){
+            return callback(null, user);
+          });
+        }
+      })
+
+    })
+  })
+)
+
 
 passport.use( 'local', new localStrategy({
   passReqToCallback: true,
@@ -128,7 +181,7 @@ var server = app.listen( config.port, function() {
   if ( port == 3000 ) {
     console.log('Server started at: http://localhost:3000/');
     console.log('Press Ctrl + c to close connection.');
-    }
+  }
 });
 
 module.exports = app;

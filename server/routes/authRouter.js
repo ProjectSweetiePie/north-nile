@@ -18,4 +18,11 @@ router.get('/', function(request, response, next){
 
 });
 
+router.get('/facebook', passport.authenticate('facebook', { scope : 'email' }));
+
+router.get('/facebook/callback', passport.authenticate('facebook', {
+  successRedirect: ''
+}))
+
+
 module.exports = router;
