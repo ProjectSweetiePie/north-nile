@@ -5,6 +5,7 @@ node_modules
 *.log
 
 # File System
+.env
 .DS_Store
 server/public/img/*
 server/public/assets/scripts/*
