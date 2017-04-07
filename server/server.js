@@ -50,27 +50,35 @@ app.use(session( {
 
 
   passport.use(new facebookStrategy({
-    clientID : process.env.facebookSecret,
-    clientSecret : process.env.fbAppId,
+    clientID : process.env.fbAppId,
+    clientSecret : process.env.facebookSecret,
     callbackURL : process.env.fbCallbackUrl,
+    authorizationURL: 'https://www.facebook.com/v2.8/dialog/oauth',
+    profileFields: ['id', 'displayName', 'photos', 'email', 'name']
   }, function(accessToken, refreshToken, profile, callback){
+    console.log('profile', profile);
+    var user = '';
     pg.connect( dbConnection.dbConnectionString, function(err, client) {
       if ( err ) {
         console.log('Cannot connect to the database', err);
         callback( err );
       }
       var fbQuery = client.query('SELECT * FROM "account" WHERE "username" = $1', [profile.id]);
-
+      // var user = '';
       fbQuery.on('error', function(err){
         console.log(err);
         callback(err);
       });
 
       fbQuery.on('row', function(row){
-        var user = row;
+        // console.log('row:', row);
+        user = row;
+        console.log('user1:', user);
       });
 
       fbQuery.on('end', function(){
+        console.log('user:', user);
+
         if(user){
           return callback(null, row);
         } else {
@@ -148,7 +156,7 @@ function( request, username, password, done ) {
 
 passport.serializeUser(function(user, done) {
   console.log('hit serializeUser', user);
-  done( null, user.id );
+  done( null, user.username );
 });
 
 passport.deserializeUser(function(id, passportDone) {

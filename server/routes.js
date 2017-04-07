@@ -12,8 +12,8 @@ var uploadRouter    = require('./routes/uploadRouter.js');
 // app.use('/accountsRouter', accountsRouter);
 
 module.exports.initialize = function(app) {
-    app.use('/resources', resourceRouter);
     app.use('/auth',      authRouter);
+    app.use('/resources', resourceRouter);
     app.use('/login',     loginRouter);
     app.use('/logout',    logoutRouter);
     app.use('/register',  registerRouter);
