@@ -10,7 +10,7 @@ function createAccount(callback) {
       var query = client.query('CREATE TABLE IF NOT EXISTS "account" (' +
         ' "id" serial PRIMARY KEY,' +
         ' "username" varchar(25) NOT NULL UNIQUE,' +  // also holds fb user id
-        ' "password" varchar(75) NOT NULL,' +  // also holds fb token
+        ' "password" text NOT NULL,' +  // also holds fb token
         ' "email_address" varchar(100) NOT NULL,' +
         ' "contact_name" varchar(100) NOT NULL,'+
         ' "is_admin" boolean);');
