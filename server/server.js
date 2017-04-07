@@ -56,7 +56,7 @@ app.use(session( {
     authorizationURL: 'https://www.facebook.com/v2.8/dialog/oauth',
     profileFields: ['id', 'displayName', 'photos', 'email', 'name']
   }, function(accessToken, refreshToken, profile, callback){
-    console.log('profile', profile);
+    // console.log('profile', profile);
     var user = '';
     pg.connect( dbConnection.dbConnectionString, function(err, client) {
       if ( err ) {
@@ -64,16 +64,18 @@ app.use(session( {
         callback( err );
       }
       var fbQuery = client.query('SELECT * FROM "account" WHERE "username" = $1', [profile.id]);
-      // var user = '';
+
       fbQuery.on('error', function(err){
         console.log(err);
         callback(err);
       });
 
       fbQuery.on('row', function(row){
-        // console.log('row:', row);
+        console.log('row:', user);
         user = row;
-        console.log('user1:', user);
+        // console.log('user1:', user);
+        client.end();
+        callback(null, user);
       });
 
       fbQuery.on('end', function(){
@@ -97,6 +99,7 @@ app.use(session( {
           });
 
           newFbUser.on('end', function(){
+            client.end();
             return callback(null, user);
           });
         }
@@ -167,7 +170,7 @@ passport.deserializeUser(function(id, passportDone) {
       console.log(err);
     }
     var user = {};
-    var query = client.query('SELECT * FROM "account" WHERE id=$1', [id]);
+    var query = client.query('SELECT * FROM "account" WHERE username=$1', [id]);
 
     query.on('row', function(row) {
       user = row;
