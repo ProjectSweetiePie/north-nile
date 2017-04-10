@@ -25,7 +25,7 @@ angular.module('northApp').config(['$routeProvider', '$locationProvider', '$mdGe
   });
 
   $mdGestureProvider.skipClickHijack();
-  $locationProvider.html5Mode(true);
+  // $locationProvider.html5Mode(true);
 }]);
 
 angular.module('northApp').filter("urlFilter", function () {
@@ -42,7 +42,7 @@ angular.module('northApp').filter("urlFilter", function () {
         }
         return result;
       }
-  }
+  };
 });
   String.prototype.startWith = function (str) {
   return this.indexOf(str) == 0;
