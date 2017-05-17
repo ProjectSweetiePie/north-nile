@@ -12,13 +12,13 @@ var uploadRouter    = require('./routes/uploadRouter.js');
 // app.use('/accountsRouter', accountsRouter);
 
 module.exports.initialize = function(app) {
-    app.use('/auth',      authRouter);
     app.use('/resources', resourceRouter);
+    app.use('/auth',      authRouter);
     app.use('/login',     loginRouter);
     app.use('/logout',    logoutRouter);
     app.use('/register',  registerRouter);
     app.use('/accounts',  accountsRouter);
     app.use('/upload',    uploadRouter);
     app.use('/',          indexRouter);
-};
+}
 // DO NOT PUT ANY OTHER ROUTES UNDER indexRouter!!!

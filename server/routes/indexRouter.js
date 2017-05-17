@@ -10,7 +10,7 @@ router.get('/', function(req, res){
 // catch-all route : DO NOT PUT ANY ROUTES UNDERNEATH THIS
 router.get('/*', function(req, res){
   res.sendFile(path.join(__dirname, '../public/views/index.html'))
-  console.log('catch-all route loading', req);
+  console.log('catch-all route loading');
 });
 
 module.exports = router;
